@@ -1,11 +1,10 @@
-import { Box, AppBar, Toolbar, Container, Typography, Button } from '@mui/material';
+import { Box, AppBar, Toolbar, Container, Typography, Button, MenuList } from '@mui/material';
 import { Group } from '@mui/icons-material';
+import { NavLink } from 'react-router';
+import MenuItemLink from '../shared/components/MenuItemLink';
 
 
-type Props ={
-  openForm : ()=>void;
-}
-export default function Navbar({openForm}: Props) {
+export default function Navbar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{
@@ -14,14 +13,17 @@ export default function Navbar({openForm}: Props) {
           <Toolbar sx={{display:'flex', justifyContent:'space-between'}}>
             <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}>
               <Group fontSize='large'/>
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>Reactivities</Typography>
+              <Typography component={NavLink} to='/' variant="h4" sx={{
+                 fontWeight: 'bold',
+                 color:'inherit',
+                 textDecoration:'none' }}>Reactivities</Typography>
             </Box>
-            <Box sx={{ display: 'flex' }}>
-              <Button color="inherit" sx={{fontSize: '1.2rem', fontWeight:'bold'}}>Activities</Button>
-              <Button color="inherit" sx={{fontSize: '1.2rem', fontWeight:'bold'}}>About</Button>
-              <Button color="inherit" sx={{fontSize: '1.2rem', fontWeight:'bold'}}>Contact</Button>
-            </Box>
-            <Button onClick={openForm} size='large' variant='contained' color='warning'>Create Activity</Button>
+            <MenuList sx={{ display: 'flex' }}>
+              <MenuItemLink to='/activities'>Activities</MenuItemLink>
+              <MenuItemLink to='/createActivity'>Create Activity</MenuItemLink>
+            </MenuList>
+            {/* <Button onClick={()=>{}} size='large' variant='contained' color='warning'>Create Activity</Button> */}
+            <Button onClick={()=>{}} size='large' variant='contained' color='warning'>User Menu</Button>
         </Toolbar>
         </Container>
       </AppBar>

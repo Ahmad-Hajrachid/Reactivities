@@ -3,13 +3,10 @@ import type { Activity } from "../../../classes/Activity";
 import React from "react";
 import { useActivities } from "../../../lib/hooks/useActivities";
 
-type Props = {
-    activity? : Activity;
-    closeForm : ()=> void;
-}
-const ActivityForm = ({activity, closeForm}:Props) => {
+const ActivityForm = () => {
     const {updateActivity, createActivity} = useActivities();
 
+    const activity = {} as Activity;
     const handleSubmit = async (event : React.SubmitEvent<HTMLFormElement>) =>{
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
@@ -22,10 +19,8 @@ const ActivityForm = ({activity, closeForm}:Props) => {
         if(activity) {
             data.id = activity.id;
             await updateActivity.mutateAsync(data as unknown as Activity);
-            closeForm();
         } else {
             await createActivity.mutateAsync(data as unknown as Activity);
-            closeForm();
         }
     }
 
@@ -46,7 +41,6 @@ const ActivityForm = ({activity, closeForm}:Props) => {
             <TextField name="city" label="City" defaultValue={activity?.city}/>
             <TextField name="venue" label="Venue" defaultValue={activity?.venue}/>
             <Box sx={{display:"flex", justifyContent: "end", gap: 2}}>
-                <Button onClick={closeForm} color='inherit'>Cancel</Button>
                 <Button 
                 type ="submit" 
                 color='success' 
