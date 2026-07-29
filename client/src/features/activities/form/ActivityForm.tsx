@@ -2,11 +2,13 @@ import {Box, Button, Paper, TextField, Typography} from "@mui/material"
 import type { Activity } from "../../../classes/Activity";
 import React from "react";
 import { useActivities } from "../../../lib/hooks/useActivities";
+import { useNavigate, useParams } from "react-router";
 
 const ActivityForm = () => {
-    const {updateActivity, createActivity} = useActivities();
+    const {id} = useParams();
+    const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id);
+    const navigate = useNavigate();
 
-    const activity = {} as Activity;
     const handleSubmit = async (event : React.SubmitEvent<HTMLFormElement>) =>{
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
@@ -19,15 +21,21 @@ const ActivityForm = () => {
         if(activity) {
             data.id = activity.id;
             await updateActivity.mutateAsync(data as unknown as Activity);
+            navigate(`/activities/${activity.id}`)
         } else {
-            await createActivity.mutateAsync(data as unknown as Activity);
+            await createActivity.mutate(data as unknown as Activity, {
+                onSuccess: (id) => {
+                    navigate(`/activities/${id}`);
+                }
+            });
         }
     }
-
+  
+    if(isLoadingActivity) return <Typography variant="h5">Loading activity...</Typography>
   return (
     <Paper sx={{borderRadius: 3, padding:3}}>
         <Typography variant = "h5" gutterBottom color="primary">
-            Create activity
+            {activity ? 'Edit' : 'Create'} activity
         </Typography>
         <Box component="form" onSubmit = {handleSubmit} sx={{display: "flex", flexDirection:"column", gap: 3}}>
             <TextField name="title" label="Title" defaultValue={activity?.title}/>
