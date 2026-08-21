@@ -1,5 +1,6 @@
 import { Grid,} from '@mui/material';
 import { ActivityList } from './ActivityList';
+import ActivityFilters from './ActivityFilters';
 
 export const ActivityDashboard = () => {
   
@@ -9,7 +10,7 @@ export const ActivityDashboard = () => {
             <ActivityList />
         </Grid>
         <Grid size={5}>
-            Activity Filters Go Here
+            <ActivityFilters />
         </Grid>
     </Grid>
   )
