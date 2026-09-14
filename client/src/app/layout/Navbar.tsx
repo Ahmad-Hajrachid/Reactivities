@@ -26,6 +26,7 @@ export default function Navbar() {
               <MenuItemLink to='/activities'>Activities</MenuItemLink>
               <MenuItemLink to='/createActivity'>Create Activity</MenuItemLink>
               <MenuItemLink to='/counter'>Counter</MenuItemLink>
+              <MenuItemLink to='/errors'>Errors</MenuItemLink>
             </MenuList>
             {/* <Button onClick={()=>{}} size='large' variant='contained' color='warning'>Create Activity</Button> */}
             <Button onClick={()=>{}} size='large' variant='contained' color='warning'>User Menu</Button>
