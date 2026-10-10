@@ -1,34 +1,31 @@
-import {Box, Button, Paper, TextField, Typography} from "@mui/material"
-import type { Activity } from "../../../classes/Activity";
-import React from "react";
+import {Box, Button, Paper, Typography} from "@mui/material"
 import { useActivities } from "../../../lib/hooks/useActivities";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
+import {useForm} from 'react-hook-form';
+import { useEffect } from "react";
+import {zodResolver} from "@hookform/resolvers/zod"
+import { activitySchema, type ActivitySchema } from "../../../lib/schemas/activitySchema";
+import TextInput from "../../../app/shared/components/TextInput";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import { categoryOptions } from "./CategoryOptions";
+import DateTimeInput from "../../../app/shared/components/DateTimeInput";
+import { addYears, subYears } from "date-fns";
+import LocationInput from "../../../app/shared/components/LocationInput";
 
 const ActivityForm = () => {
+    const {reset, control, handleSubmit} = useForm<ActivitySchema>({
+        mode:'onTouched',
+        resolver: zodResolver(activitySchema)
+    })
     const {id} = useParams();
     const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id);
-    const navigate = useNavigate();
 
-    const handleSubmit = async (event : React.SubmitEvent<HTMLFormElement>) =>{
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
+    useEffect(()=> {
+        if(activity) reset(activity)
+    },[activity, reset])
 
-        const data : {[key: string] : FormDataEntryValue} = {}
-        formData.forEach((value,key) =>{
-            data[key] = value;
-        });
-
-        if(activity) {
-            data.id = activity.id;
-            await updateActivity.mutateAsync(data as unknown as Activity);
-            navigate(`/activities/${activity.id}`)
-        } else {
-            await createActivity.mutate(data as unknown as Activity, {
-                onSuccess: (id) => {
-                    navigate(`/activities/${id}`);
-                }
-            });
-        }
+    const onSubmit = (data: ActivitySchema) =>{
+        console.log(data)
     }
   
     if(isLoadingActivity) return <Typography variant="h5">Loading activity...</Typography>
@@ -37,17 +34,38 @@ const ActivityForm = () => {
         <Typography variant = "h5" gutterBottom color="primary">
             {activity ? 'Edit' : 'Create'} activity
         </Typography>
-        <Box component="form" onSubmit = {handleSubmit} sx={{display: "flex", flexDirection:"column", gap: 3}}>
-            <TextField name="title" label="Title" defaultValue={activity?.title}/>
-            <TextField name="description" label="Description"  defaultValue={activity?.description}/>
-            <TextField name="category" label="Category" defaultValue={activity?.category}/>
-            <TextField name="date" label="Date" type="date" 
-            defaultValue={activity?.date
-                ? new Date(activity.date).toISOString().split('T')[0]
-                : new Date().toISOString().split('T')[0]
-            }/>
-            <TextField name="city" label="City" defaultValue={activity?.city}/>
-            <TextField name="venue" label="Venue" defaultValue={activity?.venue}/>
+        <Box component="form" onSubmit = {handleSubmit(onSubmit)} sx={{display: "flex", flexDirection:"column", gap: 3}}>
+            <TextInput 
+                label="Title"
+                control={control}
+                name="title"
+            />
+            <TextInput 
+                label="Description"
+                control={control}
+                name="description"
+                multiline 
+                rows={3}
+            />
+            <SelectInput
+                items={[{text:"Clear", value:""},...categoryOptions]} 
+                label="Category"
+                control={control}
+                name="category"
+            />
+            <DateTimeInput 
+                label="Date"
+                control={control}
+                name="date"
+                disablePast={true}
+                disableFuture={false}
+                maxDate={addYears(new Date(),1)}
+                minDate={subYears(new Date(),1)}
+            />
+            <LocationInput control={control}
+            label="Enter the location"
+            name="location"/>
+           
             <Box sx={{display:"flex", justifyContent: "end", gap: 2}}>
                 <Button 
                 type ="submit" 
