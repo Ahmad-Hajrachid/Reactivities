@@ -5,12 +5,13 @@
     description: string
     category: string
     isCancelled: boolean
-    city: string
+    city?: string
     venue: string
     latitude: number
     longitude: number
 }
 
+export type CreateActivity = Omit<Activity, 'id' | 'isCancelled'>
 
 export type LocationIQSuggestion = {
   place_id: string

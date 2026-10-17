@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Activity } from "../../classes/Activity";
+import type { Activity, CreateActivity } from "../../classes/Activity";
 import agent from "../api/agent";
 import { useLocation } from "react-router";
 
@@ -39,7 +39,7 @@ export const useActivities = (id? :string)=>{
     });
 
     const createActivity = useMutation({
-      mutationFn: async (activity : Activity)=>{
+      mutationFn: async (activity : CreateActivity)=>{
         const response = await agent.post('/activities',activity)
         return response.data;
       },
